@@ -103,18 +103,31 @@ class FlirImageExtractor:
 
         return visual_np
 
+
+    def get_metadata(self):
+        # read image metadata needed for conversion of the raw sensor values
+        # E=1,SD=1,RTemp=20,ATemp=RTemp,IRWTemp=RTemp,IRT=1,RH=50,PR1=21106.77,PB=1501,PF=1,PO=-7340,PR2=0.012545258
+        fields_to_extract = ['-Emissivity', '-SubjectDistance', '-AtmosphericTemperature',
+                             '-ReflectedApparentTemperature', '-IRWindowTemperature', '-IRWindowTransmission', '-RelativeHumidity',
+                             '-PlanckR1', '-PlanckB', '-PlanckF', '-PlanckO', '-PlanckR2',
+                             '-Real2IR', '-OffsetX', '-OffsetY', '-PiPX1', '-PiPX2',
+                             '-PiPY1', '-PiPY2', '-EmbeddedImageWidth', '-EmbeddedImageHeight']
+        meta_json = subprocess.check_output(
+            [self.exiftool_path, self.flir_img_filename] + fields_to_extract + ['-j'])
+        metadata = json.loads(meta_json.decode())[0]
+        for key in metadata:
+            if key == "OffsetX" or key == "OffsetY":
+                metadata[key] = int(metadata[key])
+
+        return metadata
+
+
     def extract_thermal_image(self):
         """
         extracts the thermal image as 2D numpy array with temperatures in oC
         """
 
-        # read image metadata needed for conversion of the raw sensor values
-        # E=1,SD=1,RTemp=20,ATemp=RTemp,IRWTemp=RTemp,IRT=1,RH=50,PR1=21106.77,PB=1501,PF=1,PO=-7340,PR2=0.012545258
-        meta_json = subprocess.check_output(
-            [self.exiftool_path, self.flir_img_filename, '-Emissivity', '-SubjectDistance', '-AtmosphericTemperature',
-             '-ReflectedApparentTemperature', '-IRWindowTemperature', '-IRWindowTransmission', '-RelativeHumidity',
-             '-PlanckR1', '-PlanckB', '-PlanckF', '-PlanckO', '-PlanckR2', '-j'])
-        meta = json.loads(meta_json.decode())[0]
+        meta = self.get_metadata()
 
         # exifread can't extract the embedded thermal image, use exiftool instead
         thermal_img_bytes = subprocess.check_output([self.exiftool_path, "-RawThermalImage", "-b", self.flir_img_filename])
@@ -259,27 +272,3 @@ class FlirImageExtractor:
                 pixel_values.append([x, y, c])
 
             writer.writerows(pixel_values)
-
-
-if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description='Extract and visualize Flir Image data')
-    parser.add_argument('-i', '--input', type=str, help='Input image. Ex. img.jpg', required=True)
-    parser.add_argument('-p', '--plot', help='Generate a plot using matplotlib', required=False, action='store_true')
-    parser.add_argument('-exif', '--exiftool', type=str, help='Custom path to exiftool', required=False,
-                        default='exiftool')
-    parser.add_argument('-csv', '--extractcsv', help='Export the thermal data per pixel encoded as csv file',
-                        required=False)
-    parser.add_argument('-d', '--debug', help='Set the debug flag', required=False,
-                        action='store_true')
-    args = parser.parse_args()
-
-    fie = FlirImageExtractor(exiftool_path=args.exiftool, is_debug=args.debug)
-    fie.process_image(args.input)
-
-    if args.plot:
-        fie.plot()
-
-    if args.extractcsv:
-        fie.export_thermal_to_csv(args.extractcsv)
-
-    fie.save_images()
