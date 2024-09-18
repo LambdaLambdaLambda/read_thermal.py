@@ -1,0 +1,8 @@
+not a TIFF file b''. An error occurred calling tiff.imread(../Tesi_magistrale_bugin/elaborated_data/prediction_all_images_from_apeer/FLIR1979_finalprediction.ome.tiff)
+not a TIFF file b''. An error occurred calling tiff.imread(../Tesi_magistrale_bugin/elaborated_data/prediction_all_images_from_apeer/FLIR2831_finalprediction.ome.tiff)
+not a TIFF file b''. An error occurred calling tiff.imread(../Tesi_magistrale_bugin/elaborated_data/prediction_all_images_from_apeer/FLIR3523_finalprediction.ome.tiff)
+not a TIFF file b''. An error occurred calling tiff.imread(../Tesi_magistrale_bugin/elaborated_data/prediction_all_images_from_apeer/FLIR3826_finalprediction.ome.tiff)
+not a TIFF file b''. An error occurred calling tiff.imread(../Tesi_magistrale_bugin/elaborated_data/prediction_all_images_from_apeer/FLIR4157_finalprediction.ome.tiff)
+not a TIFF file b''. An error occurred calling tiff.imread(../Tesi_magistrale_bugin/elaborated_data/prediction_all_images_from_apeer/FLIR5048_finalprediction.ome.tiff)
+not a TIFF file b''. An error occurred calling tiff.imread(../Tesi_magistrale_bugin/elaborated_data/prediction_all_images_from_apeer/FLIR5148_finalprediction.ome.tiff)
+not a TIFF file b''. An error occurred calling tiff.imread(../Tesi_magistrale_bugin/elaborated_data/prediction_all_images_from_apeer/FLIR6675_finalprediction.ome.tiff)
